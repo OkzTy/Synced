@@ -267,28 +267,6 @@ export default function DMA() {
                     </div>
                   )}
                   {/* Status badge */}
-                  <span
-                    style={{
-                      position: 'absolute',
-                      top: 12,
-                      right: 12,
-                      padding: '3px 8px',
-                      borderRadius: 6,
-                      fontSize: 9,
-                      fontWeight: 700,
-                      background: meta.status === 'Undetected'
-                        ? 'rgba(16, 185, 129, 0.2)'
-                        : 'rgba(245, 158, 11, 0.2)',
-                      color: meta.status === 'Undetected' ? '#10b981' : '#f59e0b',
-                      border: meta.status === 'Undetected'
-                        ? '1px solid rgba(16, 185, 129, 0.3)'
-                        : '1px solid rgba(245, 158, 11, 0.3)',
-                      backdropFilter: 'blur(8px)',
-                    }}
-                  >
-                    {meta.status}
-                  </span>
-
                   {hasLicense && (
                     <span
                       style={{
@@ -325,6 +303,23 @@ export default function DMA() {
                       fontWeight: 700,
                     }}>
                       v{meta.version}
+                    </span>
+                    <span
+                      style={{
+                        padding: '2px 6px',
+                        borderRadius: 4,
+                        fontSize: 9,
+                        fontWeight: 700,
+                        background: meta.status === 'Undetected'
+                          ? 'rgba(16, 185, 129, 0.15)'
+                          : 'rgba(245, 158, 11, 0.15)',
+                        color: meta.status === 'Undetected' ? '#10b981' : '#f59e0b',
+                        border: meta.status === 'Undetected'
+                          ? '1px solid rgba(16, 185, 129, 0.3)'
+                          : '1px solid rgba(245, 158, 11, 0.3)',
+                      }}
+                    >
+                      {meta.status}
                     </span>
                   </div>
 

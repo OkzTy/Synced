@@ -324,28 +324,6 @@ export default function Scripting() {
                     </span>
                   </div>
 
-                  {/* Status badge */}
-                  <span
-                    style={{
-                      position: 'absolute',
-                      top: 10,
-                      right: 10,
-                      padding: '3px 8px',
-                      borderRadius: 6,
-                      fontSize: 9,
-                      fontWeight: 700,
-                      background: meta.status === 'updated' || meta.status === 'Undetected'
-                        ? 'rgba(16, 185, 129, 0.2)'
-                        : 'rgba(239, 68, 68, 0.2)',
-                      color: meta.status === 'updated' || meta.status === 'Undetected' ? '#10b981' : '#ef4444',
-                      border: meta.status === 'updated' || meta.status === 'Undetected'
-                        ? '1px solid rgba(16, 185, 129, 0.3)'
-                        : '1px solid rgba(239, 68, 68, 0.3)',
-                      backdropFilter: 'blur(8px)',
-                    }}
-                  >
-                    {meta.status === 'updated' || meta.status === 'Undetected' ? '✓ Updated' : '⚠ Outdated'}
-                  </span>
                 </div>
 
                 {/* Card Info */}
@@ -363,6 +341,23 @@ export default function Scripting() {
                       fontWeight: 700,
                     }}>
                       v{meta.version}
+                    </span>
+                    <span
+                      style={{
+                        padding: '2px 6px',
+                        borderRadius: 4,
+                        fontSize: 9,
+                        fontWeight: 700,
+                        background: meta.status === 'updated' || meta.status === 'Undetected'
+                          ? 'rgba(16, 185, 129, 0.15)'
+                          : 'rgba(239, 68, 68, 0.15)',
+                        color: meta.status === 'updated' || meta.status === 'Undetected' ? '#10b981' : '#ef4444',
+                        border: meta.status === 'updated' || meta.status === 'Undetected'
+                          ? '1px solid rgba(16, 185, 129, 0.3)'
+                          : '1px solid rgba(239, 68, 68, 0.3)',
+                      }}
+                    >
+                      {meta.status === 'updated' || meta.status === 'Undetected' ? 'Updated' : 'Outdated'}
                     </span>
                   </div>
 

@@ -125,12 +125,22 @@ function AppContent() {
 
   // Maintenance states
   const [maintenanceActive, setMaintenanceActive] = useState(false);
+  const [maintenanceServices, setMaintenanceServices] = useState({
+    ai_assistant: false,
+    dma: false,
+    internal: false,
+    script: false,
+    bridge: false
+  });
 
   useEffect(() => {
     async function checkMaintenance() {
       try {
         const res = await api.getMaintenanceStatus();
         setMaintenanceActive(!!res.active);
+        if (res.services) {
+          setMaintenanceServices(res.services);
+        }
       } catch (e) {
         console.warn('Failed to fetch maintenance status:', e);
       }
@@ -139,6 +149,12 @@ function AppContent() {
     const interval = setInterval(checkMaintenance, 2000);
     return () => clearInterval(interval);
   }, []);
+
+  const isServiceInMaintenance = (serviceKey) => {
+    if (getIsAdmin()) return false;
+    if (maintenanceActive) return true;
+    return !!maintenanceServices[serviceKey];
+  };
 
   useEffect(() => {
     if (!localStorage.getItem('synced-setup-complete') && !localStorage.getItem('synced-username')) {
@@ -1226,14 +1242,14 @@ function AppContent() {
           <ErrorBoundary>
             <Routes>
               <Route path="/" element={<Dashboard bridgeConfig={bridgeConfig} bridgeOnline={bridgeOnline} refreshBridge={refreshBridge} language={language} searchQuery={searchQuery} />} />
-              <Route path="/dma" element={<DMA language={language} searchQuery={searchQuery} />} />
-              <Route path="/external" element={<ExternalCheat language={language} searchQuery={searchQuery} />} />
-              <Route path="/internal" element={<InternalCheat language={language} searchQuery={searchQuery} />} />
-              <Route path="/scripts" element={<Scripting language={language} searchQuery={searchQuery} />} />
-              <Route path="/ai" element={<AIAssistant bridgeConfig={bridgeConfig} language={language} mainHostname={mainHostname} bridgeHostname={bridgeHostname} searchQuery={searchQuery} />} />
-              <Route path="/processes" element={<Processes bridgeConfig={bridgeConfig} bridgeOnline={bridgeOnline} language={language} bridgeHostname={bridgeHostname} searchQuery={searchQuery} />} />
-              <Route path="/terminal" element={<Terminal bridgeConfig={bridgeConfig} bridgeOnline={bridgeOnline} language={language} mainHostname={mainHostname} bridgeHostname={bridgeHostname} searchQuery={searchQuery} />} />
-              <Route path="/files" element={<Files bridgeConfig={bridgeConfig} bridgeOnline={bridgeOnline} language={language} mainHostname={mainHostname} bridgeHostname={bridgeHostname} searchQuery={searchQuery} />} />
+              <Route path="/dma" element={isServiceInMaintenance('dma') ? <ServiceMaintenanceNotice serviceName="DMA Console" language={language} /> : <DMA language={language} searchQuery={searchQuery} />} />
+              <Route path="/external" element={isServiceInMaintenance('internal') ? <ServiceMaintenanceNotice serviceName="External Client" language={language} /> : <ExternalCheat language={language} searchQuery={searchQuery} />} />
+              <Route path="/internal" element={isServiceInMaintenance('internal') ? <ServiceMaintenanceNotice serviceName="Internal Client" language={language} /> : <InternalCheat language={language} searchQuery={searchQuery} />} />
+              <Route path="/scripts" element={isServiceInMaintenance('script') ? <ServiceMaintenanceNotice serviceName="Scripting Console" language={language} /> : <Scripting language={language} searchQuery={searchQuery} />} />
+              <Route path="/ai" element={isServiceInMaintenance('ai_assistant') ? <ServiceMaintenanceNotice serviceName="AI Assistant" language={language} /> : <AIAssistant bridgeConfig={bridgeConfig} language={language} mainHostname={mainHostname} bridgeHostname={bridgeHostname} searchQuery={searchQuery} />} />
+              <Route path="/processes" element={isServiceInMaintenance('bridge') ? <ServiceMaintenanceNotice serviceName="Second PC Bridge (Processes)" language={language} /> : <Processes bridgeConfig={bridgeConfig} bridgeOnline={bridgeOnline} language={language} bridgeHostname={bridgeHostname} searchQuery={searchQuery} />} />
+              <Route path="/terminal" element={isServiceInMaintenance('bridge') ? <ServiceMaintenanceNotice serviceName="Second PC Bridge (Terminal)" language={language} /> : <Terminal bridgeConfig={bridgeConfig} bridgeOnline={bridgeOnline} language={language} mainHostname={mainHostname} bridgeHostname={bridgeHostname} searchQuery={searchQuery} />} />
+              <Route path="/files" element={isServiceInMaintenance('bridge') ? <ServiceMaintenanceNotice serviceName="Second PC Bridge (File Transfer)" language={language} /> : <Files bridgeConfig={bridgeConfig} bridgeOnline={bridgeOnline} language={language} mainHostname={mainHostname} bridgeHostname={bridgeHostname} searchQuery={searchQuery} />} />
               <Route path="/settings" element={<Settings bridgeConfig={bridgeConfig} setBridgeConfig={setBridgeConfig} bridgeOnline={bridgeOnline} theme={theme} setTheme={setThemeState} language={language} setLanguage={setLanguageState} mainHostname={mainHostname} bridgeHostname={bridgeHostname} searchQuery={searchQuery} customization={customization} setCustomization={setCustomization} />} />
               <Route path="/profile" element={<Profile language={language} searchQuery={searchQuery} />} />
               <Route path="/admin" element={<AdminPanel language={language} searchQuery={searchQuery} />} />
@@ -1242,6 +1258,25 @@ function AppContent() {
         </div>
       </Layout>
     </>
+  );
+}
+
+function ServiceMaintenanceNotice({ serviceName, language }) {
+  return (
+    <div className="page-container animate-fade-in" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', textAlign: 'center', padding: 20 }}>
+      <div style={{ fontSize: 64, marginBottom: 20, animation: 'float 3s ease-in-out infinite' }}>🛠️</div>
+      <h2 style={{ fontSize: 24, fontWeight: 800, color: 'var(--text-primary)', marginBottom: 10 }}>
+        {serviceName} {language === 'fr' ? 'en Maintenance' : 'under Maintenance'}
+      </h2>
+      <p style={{ fontSize: 13, color: 'var(--text-muted)', maxWidth: 440, lineHeight: 1.6, margin: '0 0 20px 0' }}>
+        {language === 'fr' 
+          ? `Ce service fait l'objet d'une maintenance planifiée. Veuillez revenir plus tard. Les administrateurs peuvent toujours y accéder.` 
+          : `This service is currently undergoing scheduled maintenance. Please check back later. Administrators still have access.`}
+      </p>
+      <button className="btn btn-secondary" onClick={() => window.location.hash = '#/'} style={{ padding: '8px 16px', fontSize: 13 }}>
+        {language === 'fr' ? 'Retour au Tableau de bord' : 'Back to Dashboard'}
+      </button>
+    </div>
   );
 }
 

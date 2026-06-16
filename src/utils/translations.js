@@ -221,8 +221,22 @@ export const translations = {
     passwordPlaceholder: 'Enter your Password',
     confirmPasswordPlaceholder: 'Confirm your Password',
     passwordsMismatch: 'Passwords do not match',
-    discordPlaceholderBtn: 'Connect with Discord',
-    pinDescription: 'Create a security PIN to secure remote access'
+    pinDescription: 'Create a security PIN to secure remote access',
+    howToLinkTitle: 'How to link your PCs:',
+    linkStep1: 'Ensure Synced is running on both PCs and connected to the same local network.',
+    linkStep2: 'Click Scan Network below to search for your secondary PC automatically.',
+    linkStep3: 'Or enter the secondary PC\'s IP address in the field below.',
+    secondaryIpAddress: 'Secondary PC IP Address',
+    selectModel: 'Select Model',
+    authSecurityToken: 'Auth Security Token',
+    advancedSettingsTitle: 'Show Advanced Settings (Port / Token)',
+    hideAdvancedSettingsTitle: 'Hide Advanced Settings',
+    saveConnection: 'Save Connection',
+    testLink: 'Test Link',
+    licenseStatus: 'License Status',
+    licenseStatusVal: 'Free / Product-based activation',
+    appDetails: 'Application details',
+    platform: 'Platform'
   },
   fr: {
     // Navigation & Layout
@@ -263,7 +277,7 @@ export const translations = {
     confirmRestart: 'Êtes-vous sûr de vouloir redémarrer le PC secondaire ?',
 
     // AI Assistant
-    aiSubtitle: 'Local AI powered by Dolphin for troubleshooting',
+    aiSubtitle: 'IA locale alimentée par Dolphin pour le dépannage',
     aiStatusOnline: 'Ollama : En ligne',
     aiStatusOffline: 'Ollama : Hors ligne — Démarrez Ollama pour utiliser l\'IA',
     askAnything: 'Posez-moi une question sur votre configuration...',
@@ -445,8 +459,22 @@ export const translations = {
     usernamePlaceholder: 'Entrez votre identifiant',
     passwordPlaceholder: 'Entrez votre mot de passe',
     confirmPasswordPlaceholder: 'Confirmez votre mot de passe',
-    passwordsMismatch: 'Les mots de passe ne correspondent pas',
-    pinDescription: 'Créez un code PIN de sécurité pour sécuriser l\'accès à distance'
+    pinDescription: 'Créez un code PIN de sécurité pour sécuriser l\'accès à distance',
+    howToLinkTitle: 'Comment lier vos PC :',
+    linkStep1: 'Assurez-vous que Synced est lancé sur les deux PC et connecté au même réseau local.',
+    linkStep2: 'Cliquez sur Scanner le réseau ci-dessous pour rechercher votre PC secondaire automatiquement.',
+    linkStep3: 'Ou entrez simplement l\'adresse IP du PC secondaire dans le champ ci-dessous.',
+    secondaryIpAddress: 'Adresse IP du PC secondaire',
+    selectModel: 'Sélectionner le modèle',
+    authSecurityToken: 'Jeton de sécurité',
+    advancedSettingsTitle: 'Afficher les paramètres avancés (Port / Jeton)',
+    hideAdvancedSettingsTitle: 'Masquer les paramètres avancés',
+    saveConnection: 'Sauvegarder la connexion',
+    testLink: 'Tester la liaison',
+    licenseStatus: 'Statut de la licence',
+    licenseStatusVal: 'Gratuit / Activation par produit',
+    appDetails: 'Détails de l\'application',
+    platform: 'Plateforme'
   },
   ru: {
     dashboard: 'Панель управления',

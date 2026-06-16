@@ -102,12 +102,28 @@ export default function AdminPanel({ language, searchQuery = '' }) {
   const [expandedUserTrail, setExpandedUserTrail] = useState({});
   const [maintenanceMode, setMaintenanceMode] = useState(false);
   const [maintLoading, setMaintLoading] = useState(false);
+  const [maintenanceServices, setMaintenanceServices] = useState({
+    ai_assistant: false,
+    dma: false,
+    internal: false,
+    script: false,
+    bridge: false
+  });
 
   useEffect(() => {
     async function fetchMaint() {
       try {
         const status = await api.getMaintenanceStatus();
         setMaintenanceMode(!!status.active);
+        if (status.services) {
+          setMaintenanceServices({
+            ai_assistant: !!status.services.ai_assistant,
+            dma: !!status.services.dma,
+            internal: !!status.services.internal,
+            script: !!status.services.script,
+            bridge: !!status.services.bridge
+          });
+        }
       } catch (e) {
         console.warn('Failed to load maintenance status:', e);
       }
@@ -118,12 +134,39 @@ export default function AdminPanel({ language, searchQuery = '' }) {
   const handleToggleMaintenance = async (val) => {
     setMaintLoading(true);
     try {
-      const res = await api.setMaintenanceStatus(val);
+      const res = await api.setMaintenanceStatus({
+        active: val,
+        services: maintenanceServices
+      });
       if (res.success) {
         setMaintenanceMode(val);
-        showToast(`Maintenance mode successfully ${val ? 'enabled' : 'disabled'}!`, 'success');
+        showToast(`Global maintenance mode successfully ${val ? 'enabled' : 'disabled'}!`, 'success');
       } else {
         showToast(res.error || 'Failed to toggle maintenance mode', 'danger');
+      }
+    } catch (e) {
+      showToast('Error: ' + e.message, 'danger');
+    } finally {
+      setMaintLoading(false);
+    }
+  };
+
+  const handleToggleServiceMaintenance = async (serviceKey, val) => {
+    setMaintLoading(true);
+    try {
+      const updatedServices = {
+        ...maintenanceServices,
+        [serviceKey]: val
+      };
+      const res = await api.setMaintenanceStatus({
+        active: maintenanceMode,
+        services: updatedServices
+      });
+      if (res.success) {
+        setMaintenanceServices(updatedServices);
+        showToast(`Service maintenance updated successfully!`, 'success');
+      } else {
+        showToast(res.error || 'Failed to update service maintenance status', 'danger');
       }
     } catch (e) {
       showToast('Error: ' + e.message, 'danger');
@@ -1816,7 +1859,7 @@ export default function AdminPanel({ language, searchQuery = '' }) {
             <div className="glass-card" style={{ padding: 20, border: '1px solid rgba(255, 255, 255, 0.05)', background: 'rgba(255,255,255,0.01)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div>
                 <h4 style={{ margin: '0 0 4px 0', fontSize: 14, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 6 }}>
-                  🛠️ Maintenance Mode
+                  🛠️ Global Maintenance Mode
                   {maintLoading && <span style={{ fontSize: 11, fontWeight: 400, color: 'var(--text-muted)' }}>(updating...)</span>}
                 </h4>
                 <p style={{ margin: 0, fontSize: 12, color: 'var(--text-muted)', maxWidth: 500 }}>
@@ -1857,6 +1900,61 @@ export default function AdminPanel({ language, searchQuery = '' }) {
                   </span>
                 </label>
               </div>
+            </div>
+
+            {/* Service-specific maintenance toggles */}
+            <div style={{ marginTop: 20, paddingLeft: 12, borderLeft: '2px solid rgba(255, 255, 255, 0.05)', display: 'flex', flexDirection: 'column', gap: 14 }}>
+              <h5 style={{ margin: '0 0 4px 0', fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)' }}>Service-Specific Maintenance Controls</h5>
+              
+              {[
+                { key: 'ai_assistant', label: '🤖 AI Assistant', desc: 'Blocks access to the Ollama AI Assistant page (/ai)' },
+                { key: 'dma', label: '🔌 DMA Console', desc: 'Blocks access to the Direct Memory Access catalogue page (/dma)' },
+                { key: 'internal', label: '🎯 Internal / External Clients', desc: 'Blocks access to Internal & External client pages (/internal, /external)' },
+                { key: 'script', label: '📜 Scripting Console', desc: 'Blocks access to the KryoK scripting dashboard (/scripts)' },
+                { key: 'bridge', label: '🌉 Second PC Bridge (Bridge)', desc: 'Blocks access to remote bridge functions (Files, Processes, Terminal)' }
+              ].map((service) => {
+                const isActive = !!maintenanceServices[service.key];
+                return (
+                  <div key={service.key} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', background: 'rgba(255, 255, 255, 0.01)', border: '1px solid rgba(255, 255, 255, 0.03)', borderRadius: 8 }}>
+                    <div>
+                      <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>{service.label}</span>
+                      <p style={{ margin: '2px 0 0 0', fontSize: 11, color: 'var(--text-muted)' }}>{service.desc}</p>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                      <span style={{ fontSize: 11, fontWeight: 600, color: isActive ? 'var(--warning)' : 'var(--text-muted)' }}>
+                        {isActive ? 'MAINTENANCE' : 'ACTIVE'}
+                      </span>
+                      <label className="switch" style={{ position: 'relative', display: 'inline-block', width: 38, height: 20 }}>
+                        <input 
+                          type="checkbox" 
+                          checked={isActive} 
+                          onChange={(e) => handleToggleServiceMaintenance(service.key, e.target.checked)}
+                          style={{ opacity: 0, width: 0, height: 0 }}
+                        />
+                        <span style={{
+                          position: 'absolute',
+                          cursor: 'pointer',
+                          top: 0, left: 0, right: 0, bottom: 0,
+                          backgroundColor: isActive ? 'var(--warning)' : '#27272a',
+                          borderRadius: 20,
+                          transition: '0.3s'
+                        }}>
+                          <span style={{
+                            position: 'absolute',
+                            content: '""',
+                            height: 14, width: 14,
+                            left: isActive ? 20 : 3,
+                            bottom: 3,
+                            backgroundColor: '#fff',
+                            borderRadius: '50%',
+                            transition: '0.3s'
+                          }} />
+                        </span>
+                      </label>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
 

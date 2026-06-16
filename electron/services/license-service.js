@@ -955,18 +955,77 @@ class LicenseService {
       });
       if (res.rows.length > 0) {
         const val = JSON.parse(res.rows[0].value);
-        return { active: val.maintenance_mode === true };
+        return {
+          active: val.maintenance_mode === true,
+          services: val.services || {
+            ai_assistant: false,
+            dma: false,
+            internal: false,
+            script: false,
+            bridge: false
+          }
+        };
       }
-      return { active: false };
-    } catch (e) { return { active: false }; }
+      return {
+        active: false,
+        services: {
+          ai_assistant: false,
+          dma: false,
+          internal: false,
+          script: false,
+          bridge: false
+        }
+      };
+    } catch (e) {
+      return {
+        active: false,
+        services: {
+          ai_assistant: false,
+          dma: false,
+          internal: false,
+          script: false,
+          bridge: false
+        }
+      };
+    }
   }
 
-  static async setMaintenanceStatus(isActive) {
+  static async setMaintenanceStatus(config) {
     try {
       const db = await this._getDB();
+      let newConfig = {
+        maintenance_mode: false,
+        services: {
+          ai_assistant: false,
+          dma: false,
+          internal: false,
+          script: false,
+          bridge: false
+        }
+      };
+
+      const res = await db.execute({
+        sql: 'SELECT value FROM settings WHERE key = ?',
+        args: ['system']
+      });
+      if (res.rows.length > 0) {
+        try {
+          const current = JSON.parse(res.rows[0].value);
+          newConfig.maintenance_mode = current.maintenance_mode === true;
+          if (current.services) newConfig.services = { ...newConfig.services, ...current.services };
+        } catch (e) {}
+      }
+
+      if (typeof config === 'boolean') {
+        newConfig.maintenance_mode = config;
+      } else if (typeof config === 'object' && config !== null) {
+        if (config.active !== undefined) newConfig.maintenance_mode = !!config.active;
+        if (config.services !== undefined) newConfig.services = { ...newConfig.services, ...config.services };
+      }
+
       await db.execute({
         sql: 'INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)',
-        args: ['system', JSON.stringify({ maintenance_mode: isActive })]
+        args: ['system', JSON.stringify(newConfig)]
       });
       return { success: true };
     } catch (e) {

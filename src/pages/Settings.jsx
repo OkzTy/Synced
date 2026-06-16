@@ -823,17 +823,17 @@ export default function Settings({
 
           {/* Setup Guide */}
           <div style={{ marginBottom: 20, padding: 14, background: 'rgba(255, 255, 255, 0.01)', border: '1px solid var(--border-color)', borderRadius: 8 }}>
-            <h4 style={{ margin: '0 0 8px 0', fontSize: 13, color: 'var(--text-primary)', fontWeight: 600 }}>How to link your PCs:</h4>
+            <h4 style={{ margin: '0 0 8px 0', fontSize: 13, color: 'var(--text-primary)', fontWeight: 600 }}>{t('howToLinkTitle')}</h4>
             <ol style={{ margin: 0, paddingLeft: 16, fontSize: 12, color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: 6 }}>
-              <li>Ensure <strong>Synced</strong> is running on both PCs and connected to the same internet/local network.</li>
-              <li>Click <strong>Scan Network</strong> below to search for your secondary PC automatically.</li>
-              <li>Or simply enter the secondary PC's <strong>IP Address</strong> in the field below.</li>
+              <li>{language === 'fr' ? <>Assurez-vous que <strong>Synced</strong> est lancé sur les deux PC et connecté au même réseau local.</> : <>Ensure <strong>Synced</strong> is running on both PCs and connected to the same local network.</>}</li>
+              <li>{t('linkStep2')}</li>
+              <li>{t('linkStep3')}</li>
             </ol>
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             <div className="input-group">
-              <label className="input-label">Secondary PC IP Address</label>
+              <label className="input-label">{t('secondaryIpAddress')}</label>
               <input
                 type="text"
                 className="input"
@@ -852,7 +852,7 @@ export default function Settings({
                 onClick={() => setShowAdvancedBridge(!showAdvancedBridge)}
                 style={{ padding: '6px 12px', fontSize: 11, fontWeight: 600 }}
               >
-                ⚙️ {showAdvancedBridge ? 'Hide Advanced Settings' : 'Show Advanced Settings (Port / Token)'}
+                ⚙️ {showAdvancedBridge ? t('hideAdvancedSettingsTitle') : t('advancedSettingsTitle')}
               </button>
 
               {showAdvancedBridge && (
@@ -879,7 +879,7 @@ export default function Settings({
                     />
                   </div>
                   <div className="input-group">
-                    <label className="input-label">Auth Security Token</label>
+                    <label className="input-label">{t('authSecurityToken')}</label>
                     <input
                       type="password"
                       className="input"
@@ -894,13 +894,13 @@ export default function Settings({
 
             <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap', marginTop: 8 }}>
               <button className="btn btn-primary" onClick={() => handleSettingChange(() => saveBridgeConfig())} style={{ fontWeight: 600 }}>
-                💾 Save Connection
+                💾 {t('saveConnection')}
               </button>
               <button className="btn btn-secondary" onClick={testConnection} style={{ fontWeight: 600 }}>
-                {testResult === 'testing' ? `⏳ Testing...` : `🔌 Test Link`}
+                {testResult === 'testing' ? `⏳ ${t('connecting')}` : `🔌 ${t('testLink')}`}
               </button>
               <button className="btn btn-secondary" onClick={scanNetwork} disabled={scanning} style={{ fontWeight: 600 }}>
-                {scanning ? `📡 Scanning...` : `📡 Scan Network`}
+                {scanning ? `📡 ${t('scanning')}...` : `📡 ${t('scanNetwork')}`}
               </button>
 
               {testResult === 'success' && (
@@ -931,7 +931,7 @@ export default function Settings({
 
           <div className="settings-row">
             <div className="input-group">
-              <label className="input-label">Select Model</label>
+              <label className="input-label">{t('selectModel')}</label>
               <select
                 className="input"
                 value={selectedModel}
@@ -1044,46 +1044,11 @@ export default function Settings({
         </div>
       )}
 
-      {/* License & Reset Section */}
-      {matchesQuery(t('licensingDeactivation')) && (
-        <div className="glass-card settings-section" style={{ border: '1px solid rgba(239, 68, 68, 0.2)' }}>
-          <h2 className="settings-section-title" style={{ color: '#f87171' }}>🔑 {t('licensingDeactivation')}</h2>
-          <p className="settings-section-desc">{t('licensingDesc')}</p>
-          
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 16, flexWrap: 'wrap', gap: 16 }}>
-            <div>
-              <div className="spec-item" style={{ border: 'none', padding: 0 }}>
-                <span className="spec-label">Active License Key</span>
-                <span className="spec-value text-mono" style={{ fontSize: 15, color: 'var(--text-primary)' }}>
-                  {maskLicenseKey(licenseKey)}
-                </span>
-              </div>
-              <p style={{ margin: '6px 0 0 0', fontSize: 12, color: 'var(--text-muted)' }}>
-                Deactivating will release this hardware association, letting you register this key on a different machine.
-              </p>
-            </div>
-
-            <button 
-              className="btn" 
-              onClick={handleDeactivateLicense} 
-              disabled={deactivating}
-              style={{
-                backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                color: '#f87171',
-                border: '1px solid rgba(239, 68, 68, 0.3)'
-              }}
-            >
-              {deactivating ? '⏳ Deactivating...' : `🔒 ${t('deactivateBtn')}`}
-            </button>
-          </div>
-        </div>
-      )}
-
       {/* About Section */}
       {matchesQuery('About') && (
         <div className="glass-card settings-section">
-          <h2 className="settings-section-title">ℹ️ About</h2>
-          <p className="settings-section-desc">Application details</p>
+          <h2 className="settings-section-title">ℹ️ {language === 'fr' ? 'À propos' : 'About'}</h2>
+          <p className="settings-section-desc">{t('appDetails')}</p>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
             <div className="spec-item">
@@ -1097,11 +1062,11 @@ export default function Settings({
               <span className="spec-value">{APP_VERSION}</span>
             </div>
             <div className="spec-item">
-              <span className="spec-label">License Status</span>
-              <span className="spec-value">Active — Verified</span>
+              <span className="spec-label">{t('licenseStatus')}</span>
+              <span className="spec-value">{t('licenseStatusVal')}</span>
             </div>
             <div className="spec-item">
-              <span className="spec-label">Platform</span>
+              <span className="spec-label">{t('platform')}</span>
               <span className="spec-value">Electron + React + PowerShell</span>
             </div>
           </div>
