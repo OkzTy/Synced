@@ -1,5 +1,5 @@
 # 🚀 Synced Launcher
-SSSSS
+
 <p align="center">
   <b>The ultimate all-in-one control center for EXTERNAL, INTERNAL, SCRIPT, and DMA modules.</b>
 </p>
