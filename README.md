@@ -1,4 +1,4 @@
-# 🚀 Synced Launcher
+# 🚀 Synced Launcher321321312
 
 <p align="center">
   <b>The ultimate all-in-one control center for EXTERNAL, INTERNAL, SCRIPT, and DMA modules.</b>
