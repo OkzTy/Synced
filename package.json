@@ -1,0 +1,81 @@
+{
+  "name": "synced",
+  "version": "2.3.1",
+  "description": "A cross-platform syncing tool",
+  "main": "electron/main.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "electron:dev": "concurrently \"vite\" \"wait-on http://localhost:5173 && electron .\"",
+    "electron:build": "vite build && electron-builder -p never",
+    "electron:start": "electron .",
+    "admin": "node admin/admin-server.js"
+  },
+  "author": "Synced",
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "@libsql/client": "^0.17.4",
+    "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
+    "discord-rpc": "^4.0.1",
+    "electron-updater": "^6.8.9",
+    "express": "^5.1.0",
+    "firebase": "^12.14.0",
+    "node-fetch": "^3.3.2",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-router-dom": "^7.6.2",
+    "systeminformation": "^5.25.11",
+    "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.5.2",
+    "concurrently": "^9.1.2",
+    "electron": "^36.3.1",
+    "electron-builder": "^26.0.12",
+    "vite": "^6.3.5",
+    "wait-on": "^8.0.3"
+  },
+  "build": {
+    "appId": "com.synced.app",
+    "productName": "Synced",
+    "icon": "assets/icon.png",
+    "directories": {
+      "output": "dist-electron"
+    },
+    "files": [
+      "electron/**/*",
+      "dist/**/*",
+      "bridge/**/*",
+      "admin/**/*",
+      "assets/**/*",
+      "kryok.bin",
+      "node_modules/**/*",
+      "config.json"
+    ],
+    "publish": {
+      "provider": "github",
+      "releaseType": "release"
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "protocols": [
+      {
+        "name": "Synced Protocol",
+        "schemes": [
+          "synced"
+        ]
+      }
+    ],
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "deleteAppDataOnUninstall": true,
+      "include": "build/installer.nsh"
+    }
+  }
+}

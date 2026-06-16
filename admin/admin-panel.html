@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Synced — Admin Panel</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg: #06060b;
+      --bg2: #0c0c14;
+      --card: rgba(14, 14, 24, 0.8);
+      --card-hover: rgba(20, 20, 35, 0.9);
+      --text: #e8e8f0;
+      --text2: #a0a0b8;
+      --muted: #5a5a72;
+      --accent: #6c5ce7;
+      --accent2: #a855f7;
+      --gradient: linear-gradient(135deg, #6c5ce7, #a855f7, #ec4899);
+      --border: rgba(255,255,255,0.06);
+      --glow: rgba(108,92,231,0.3);
+      --success: #22c55e;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --radius: 12px;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 32px 24px;
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 32px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      background: var(--gradient);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; font-weight: 800; color: #fff;
+      box-shadow: 0 4px 15px var(--glow);
+    }
+    .logo-text {
+      font-size: 22px; font-weight: 800;
+      background: var(--gradient);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .logo-sub { font-size: 12px; color: var(--muted); font-weight: 500; }
+
+    /* Stats */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    .stat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      backdrop-filter: blur(20px);
+      transition: all 0.2s;
+    }
+    .stat-card:hover {
+      border-color: rgba(108,92,231,0.3);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+    }
+    .stat-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--muted); font-weight: 600; margin-bottom: 6px; }
+    .stat-value { font-size: 28px; font-weight: 800; }
+    .stat-value.gradient { background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+    /* Generate Section */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 20px;
+      backdrop-filter: blur(20px);
+    }
+    .card-title {
+      font-size: 16px; font-weight: 700; margin-bottom: 4px;
+    }
+    .card-desc {
+      font-size: 12px; color: var(--muted); margin-bottom: 20px;
+    }
+
+    .form-row {
+      display: flex; gap: 12px; align-items: flex-end; margin-bottom: 16px;
+    }
+    .form-group {
+      display: flex; flex-direction: column; gap: 6px; flex: 1;
+    }
+    .form-label {
+      font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text2); font-weight: 600;
+    }
+    select, input[type="text"], input[type="number"] {
+      padding: 10px 14px;
+      background: rgba(18,18,30,0.9);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      outline: none;
+      transition: all 0.15s;
+    }
+    select:focus, input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--glow);
+    }
+
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 10px 20px;
+      border: none; border-radius: 8px;
+      font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600;
+      cursor: pointer; transition: all 0.15s; white-space: nowrap;
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn-primary {
+      background: var(--gradient); color: #fff;
+      box-shadow: 0 4px 15px var(--glow);
+    }
+    .btn-primary:hover {
+      box-shadow: 0 6px 25px rgba(108,92,231,0.5);
+      transform: translateY(-1px);
+    }
+    .btn-danger {
+      background: var(--danger); color: #fff;
+      padding: 6px 12px; font-size: 11px; border-radius: 6px;
+    }
+    .btn-danger:hover { background: #dc2626; }
+    .btn-sm { padding: 6px 12px; font-size: 11px; }
+    .btn-ghost {
+      background: transparent; color: var(--text2); border: 1px solid var(--border);
+    }
+    .btn-ghost:hover { background: var(--card); color: var(--text); }
+
+    /* Generated Keys */
+    .generated-keys {
+      margin-top: 16px;
+      padding: 16px;
+      background: rgba(18,18,30,0.6);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      display: none;
+    }
+    .generated-keys.visible { display: block; }
+    .generated-keys h4 {
+      font-size: 13px; font-weight: 600; margin-bottom: 10px; color: var(--text2);
+    }
+    .key-chip {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 12px; margin: 3px;
+      background: rgba(108,92,231,0.1);
+      border: 1px solid rgba(108,92,231,0.2);
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px; color: var(--accent2);
+      cursor: pointer;
+    }
+    .key-chip:hover { background: rgba(108,92,231,0.2); }
+
+    /* Table */
+    .table-wrapper {
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    table {
+      width: 100%; border-collapse: collapse; font-size: 13px;
+    }
+    th {
+      padding: 12px 16px; text-align: left;
+      font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px;
+      color: var(--muted); background: var(--bg2);
+      border-bottom: 1px solid var(--border);
+    }
+    td {
+      padding: 10px 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+      color: var(--text2);
+    }
+    tr { transition: background 0.15s; }
+    tr:hover { background: var(--card-hover); }
+    tr:last-child td { border-bottom: none; }
+    .key-cell {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px; color: var(--accent2);
+    }
+    .badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 10px; border-radius: 999px;
+      font-size: 10px; font-weight: 600; letter-spacing: 0.3px;
+    }
+    .badge-active { background: rgba(34,197,94,0.1); color: var(--success); border: 1px solid rgba(34,197,94,0.2); }
+    .badge-unused { background: rgba(59,130,246,0.1); color: #3b82f6; border: 1px solid rgba(59,130,246,0.2); }
+    .badge-expired { background: rgba(245,158,11,0.1); color: var(--warning); border: 1px solid rgba(245,158,11,0.2); }
+    .badge-revoked { background: rgba(239,68,68,0.1); color: var(--danger); border: 1px solid rgba(239,68,68,0.2); }
+
+    .empty-state {
+      text-align: center; padding: 40px; color: var(--muted);
+    }
+    .toast {
+      position: fixed; bottom: 24px; right: 24px;
+      padding: 12px 20px; border-radius: 8px;
+      font-size: 13px; font-weight: 500;
+      background: var(--success); color: #fff;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+      transform: translateY(100px); opacity: 0;
+      transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+      z-index: 1000;
+    }
+    .toast.visible { transform: translateY(0); opacity: 1; }
+    .toast.error { background: var(--danger); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo">
+        <div class="logo-icon">S</div>
+        <div>
+          <div class="logo-text">Synced</div>
+          <div class="logo-sub">Admin Panel</div>
+        </div>
+      </div>
+      <button class="btn btn-ghost" onclick="loadKeys()">↻ Refresh</button>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Total Keys</div>
+        <div class="stat-value gradient" id="stat-total">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Active</div>
+        <div class="stat-value" id="stat-active" style="color:var(--success)">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Unused</div>
+        <div class="stat-value" id="stat-unused" style="color:#3b82f6">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Expired / Revoked</div>
+        <div class="stat-value" id="stat-expired" style="color:var(--danger)">0</div>
+      </div>
+    </div>
+
+    <!-- Generate Keys -->
+    <div class="card">
+      <div class="card-title">Generate License Keys</div>
+      <div class="card-desc">Create new license keys to distribute to users</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Key Type</label>
+          <select id="key-type">
+            <option value="TRIAL">Trial (1 Day)</option>
+            <option value="3DAY">3 Days</option>
+            <option value="WEEK" selected>Weekly (7 Days)</option>
+            <option value="MONTH">Monthly (30 Days)</option>
+            <option value="QUARTER">Quarterly (90 Days)</option>
+            <option value="LIFETIME">Lifetime (∞)</option>
+          </select>
+        </div>
+        <div class="form-group" style="max-width:120px">
+          <label class="form-label">Quantity</label>
+          <input type="number" id="key-count" value="1" min="1" max="100" />
+        </div>
+        <button class="btn btn-primary" onclick="generateKeys()">✦ Generate</button>
+      </div>
+      <div class="generated-keys" id="generated-keys">
+        <h4>Generated Keys (click to copy):</h4>
+        <div id="generated-list"></div>
+      </div>
+    </div>
+
+    <!-- Keys Table -->
+    <div class="card">
+      <div class="card-title">All License Keys</div>
+      <div class="card-desc">Manage and monitor all issued license keys</div>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Key</th>
+              <th>Type</th>
+              <th>Status</th>
+              <th>Created</th>
+              <th>Expires</th>
+              <th>HWID</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="keys-table-body">
+            <tr><td colspan="7" class="empty-state">No keys generated yet</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const API = 'http://localhost:3847/api';
+
+    function showToast(msg, isError = false) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.className = 'toast visible' + (isError ? ' error' : '');
+      setTimeout(() => { toast.className = 'toast'; }, 3000);
+    }
+
+    async function generateKeys() {
+      const type = document.getElementById('key-type').value;
+      const count = parseInt(document.getElementById('key-count').value) || 1;
+
+      try {
+        const res = await fetch(`${API}/keys/bulk`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ type, count }),
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          const container = document.getElementById('generated-keys');
+          const list = document.getElementById('generated-list');
+          list.innerHTML = data.keys.map(k =>
+            `<span class="key-chip" onclick="copyKey('${k.key}')">${k.key} 📋</span>`
+          ).join('');
+          container.classList.add('visible');
+          showToast(`Generated ${data.count} key(s) successfully!`);
+          loadKeys();
+        } else {
+          showToast(data.error || 'Failed to generate keys', true);
+        }
+      } catch (err) {
+        showToast('Connection error: ' + err.message, true);
+      }
+    }
+
+    function copyKey(key) {
+      navigator.clipboard.writeText(key);
+      showToast('Copied: ' + key);
+    }
+
+    async function revokeKey(key) {
+      if (!confirm(`Revoke key ${key}? This cannot be undone.`)) return;
+      try {
+        const res = await fetch(`${API}/keys/${encodeURIComponent(key)}`, { method: 'DELETE' });
+        const data = await res.json();
+        if (data.success) {
+          showToast('Key revoked successfully');
+          loadKeys();
+        } else {
+          showToast(data.error || 'Failed to revoke', true);
+        }
+      } catch (err) {
+        showToast('Error: ' + err.message, true);
+      }
+    }
+
+    async function loadKeys() {
+      try {
+        const res = await fetch(`${API}/keys`);
+        const data = await res.json();
+
+        if (data.success) {
+          // Update stats
+          const total = data.keys.length;
+          const active = data.keys.filter(k => k.status === 'active').length;
+          const unused = data.keys.filter(k => k.status === 'unused').length;
+          const expired = data.keys.filter(k => k.status === 'expired' || k.status === 'revoked').length;
+
+          document.getElementById('stat-total').textContent = total;
+          document.getElementById('stat-active').textContent = active;
+          document.getElementById('stat-unused').textContent = unused;
+          document.getElementById('stat-expired').textContent = expired;
+
+          // Update table
+          const tbody = document.getElementById('keys-table-body');
+          if (data.keys.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No keys generated yet</td></tr>';
+            return;
+          }
+
+          tbody.innerHTML = data.keys.map(k => `
+            <tr>
+              <td class="key-cell" style="cursor:pointer" onclick="copyKey('${k.key}')">${k.key}</td>
+              <td>${k.type}</td>
+              <td><span class="badge badge-${k.status}">${k.status}</span></td>
+              <td>${new Date(k.created_at).toLocaleDateString()}</td>
+              <td>${k.expires_at ? new Date(k.expires_at).toLocaleDateString() : '—'}</td>
+              <td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted)">${k.hwid ? k.hwid.substring(0, 12) + '...' : '—'}</td>
+              <td>
+                ${k.status !== 'revoked' ? `<button class="btn btn-danger btn-sm" onclick="revokeKey('${k.key}')">Revoke</button>` : '<span style="color:var(--muted);font-size:11px">Revoked</span>'}
+              </td>
+            </tr>
+          `).join('');
+        }
+      } catch (err) {
+        document.getElementById('keys-table-body').innerHTML =
+          `<tr><td colspan="7" class="empty-state" style="color:var(--danger)">Failed to connect to admin server</td></tr>`;
+      }
+    }
+
+    // Load on page load
+    loadKeys();
+  </script>
+</body>
+</html>

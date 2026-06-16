@@ -1,0 +1,51 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+dist-electron/
+
+# OS files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environment
+.env
+.env.local
+
+# Database (local only)
+DATABASE/
+*.sqlite
+*.sqlite3
+*.db
+
+# C# build artifacts (old project)
+bin/
+obj/
+*.exe
+!dist-electron/**/*.exe
+
+# Electron cache
+.electron/
+
+# Config with secrets
+config.json
+upload.bat  
+upload.js  
+upload.ps1  
+
+# Encrypted KryoK binary (too large for GitHub - >100MB)
+# Users get this via the installer
+assets/kryok.bin
+
+# Scratch and temp files
+scratch/

@@ -1,0 +1,133 @@
+[
+  {
+    "id": 1,
+    "title": "Sunshine Black Screen or Connection Timeout",
+    "tags": ["sunshine", "moonlight", "stream", "network", "firewall", "blackscreen"],
+    "messages": [
+      {
+        "author": "Viper_01",
+        "avatar": "blue",
+        "timestamp": "05/06/2026 18:24",
+        "content": "Hey guys, I just set up Sunshine on my streaming/2nd PC but whenever I try to connect from Moonlight on my main gaming PC, it says 'Connection timeout' or I get a black screen for 3 seconds then it disconnects. Any help?"
+      },
+      {
+        "author": "GamerGod",
+        "avatar": "purple",
+        "timestamp": "05/06/2026 18:26",
+        "content": "Make sure you opened the ports on the streaming PC firewall. Windows blocks incoming traffic by default."
+      },
+      {
+        "author": "Staff_Admin",
+        "avatar": "orange",
+        "timestamp": "05/06/2026 18:30",
+        "content": "Run this PowerShell command on your secondary PC as Administrator to open the correct Sunshine ports:\n```powershell\nNew-NetFirewallRule -DisplayName \"Sunshine Stream\" -Direction Inbound -Protocol TCP -LocalPort 47984,47989,47990,48010 -Action Allow\nNew-NetFirewallRule -DisplayName \"Sunshine Stream UDP\" -Direction Inbound -Protocol UDP -LocalPort 47998,47999,48000,48002,48010 -Action Allow\n```"
+      },
+      {
+        "author": "Viper_01",
+        "avatar": "blue",
+        "timestamp": "05/06/2026 18:32",
+        "content": "Wow, I ran that and it connected instantly!! Thank you staff, you are a lifesaver."
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "title": "Lag and stuttering when streaming desktop",
+    "tags": ["lag", "stutter", "bitrate", "fps", "moonlight", "wifi"],
+    "messages": [
+      {
+        "author": "FragMaster",
+        "avatar": "green",
+        "timestamp": "08/06/2026 11:15",
+        "content": "I am getting heavy lag and frame drops when streaming. Both my PCs are on Wi-Fi, is that the issue?"
+      },
+      {
+        "author": "TechSupport",
+        "avatar": "purple",
+        "timestamp": "08/06/2026 11:20",
+        "content": "Yes, dual-PC streaming on Wi-Fi is highly discouraged because of packet collision. You want at least the gaming PC or the streaming PC (ideally both) connected via Ethernet. If ethernet is impossible, make sure both are on 5GHz or 6GHz band, and set your Moonlight bitrate to max 20-30 Mbps."
+      },
+      {
+        "author": "TechSupport",
+        "avatar": "purple",
+        "timestamp": "08/06/2026 11:22",
+        "content": "Also in Sunshine Web UI (http://localhost:47990), go to Configuration -> Audio/Video, and verify that your hardware encoder is set to NVENC (if Nvidia) or AMF (if AMD), NOT Software (SVT-AV1 or x264) which lags the CPU."
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "title": "Audio routing between Main and Secondary PC",
+    "tags": ["audio", "moonlight", "sound", "virtualcable", "obs"],
+    "messages": [
+      {
+        "author": "SoundWave",
+        "avatar": "red",
+        "timestamp": "09/06/2026 21:02",
+        "content": "How do I route my game audio and mic to the second PC so OBS can record it without a physical audio mixer?"
+      },
+      {
+        "author": "AudioWizard",
+        "avatar": "orange",
+        "timestamp": "09/06/2026 21:05",
+        "content": "Download Virtual Audio Cable (VAC) or VB-Audio Cable (free) on the Gaming PC. Set VB-Cable Input as your Windows default playback device. Then open OBS on your gaming PC, set VB-Cable as a source, and use OBS Application Audio Capture to isolate. Alternatively, Moonlight stream naturally captures all audio from the Gaming PC and routes it to the Secondary PC's output device."
+      },
+      {
+        "author": "AudioWizard",
+        "avatar": "orange",
+        "timestamp": "09/06/2026 21:08",
+        "content": "For microphones, use Voicemeeter Banana or VBAN to stream mic audio over the local network (UDP) with near-zero latency. Enable VBAN on both PCs, set VBAN Out on Gaming PC IP, and VBAN In on Streaming PC IP."
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "title": "Local AI running slow / GPU not used",
+    "tags": ["ai", "llama", "gpu", "cuda", "vulkan", "rocm", "speed"],
+    "messages": [
+      {
+        "author": "NeonRacer",
+        "avatar": "blue",
+        "timestamp": "10/06/2026 14:40",
+        "content": "My local AI assistant takes like 10 seconds to generate one sentence. I have an RX 7800 XT (AMD) and 32GB RAM. Is it running on CPU?"
+      },
+      {
+        "author": "AI_Dev",
+        "avatar": "green",
+        "timestamp": "10/06/2026 14:43",
+        "content": "If you are using llama-server (llama.cpp) on an AMD card, it runs on CPU by default unless you compile it with Vulkan or ROCm support. Our ProjectBridge AI runner automatically bundles Vulkan support. Ensure you have the latest AMD Adrenalin drivers. In ProjectBridge settings, make sure GPU acceleration is checked and that 'nglg' (number of GPU layers) is set to 33 or 99 to offload the entire model to VRAM."
+      },
+      {
+        "author": "AI_Dev",
+        "avatar": "green",
+        "timestamp": "10/06/2026 14:45",
+        "content": "If you are on NVIDIA, make sure you have CUDA installed (v12.x). The server console output will show `ggml_cuda: GPU` or `ggml_vulkan: GPU` if it's using the graphics card. If it says `BLAS = 0` or just loads CPU threads, it is running on system memory."
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "title": "ProjectBridge connection refused between PCs",
+    "tags": ["bridge", "connect", "port", "ip", "refused", "unauthorized"],
+    "messages": [
+      {
+        "author": "DuoPlayer",
+        "avatar": "purple",
+        "timestamp": "12/06/2026 02:10",
+        "content": "The bridge dashboard says 'Secondary PC Offline'. I copied the powershell setup command and it finished without errors, but still offline. What now?"
+      },
+      {
+        "author": "Staff_Admin",
+        "avatar": "orange",
+        "timestamp": "12/06/2026 02:15",
+        "content": "First, verify that both PCs are on the same local subnet (e.g. 192.168.1.X). If they are on different subnets (like one on 192.168.1.X and one on 192.168.2.X) they might not route properly."
+      },
+      {
+        "author": "Staff_Admin",
+        "avatar": "orange",
+        "timestamp": "12/06/2026 02:18",
+        "content": "Second, check the Authorization token in your `config.json` on both PCs. It must match exactly. In `ProjectBridge`, click the settings gear in the top right to verify your local IP addresses and bridge tokens. Also, the secondary PC must run the server on port 7224. Verify if port 7224 is open on the secondary PC by running: `Test-NetConnection -ComputerName <Secondary-IP> -Port 7224` in PowerShell on the main PC."
+      }
+    ]
+  }
+]

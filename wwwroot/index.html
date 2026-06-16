@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Synced Dual-PC Bridge</title>
+  <!-- Google Fonts: Outfit and Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- App Container -->
+  <div id="app-container">
+    
+    <!-- Sidebar Navigation -->
+    <aside id="app-sidebar">
+      <div class="brand-header">
+        <div class="brand-logo"></div>
+        <div class="brand-title">SYNCED</div>
+        <div class="brand-subtitle">DUAL-PC BRIDGE</div>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <button id="nav-dashboard" class="nav-item active" onclick="switchTab('dashboard')">
+          <span class="nav-icon">📊</span>
+          <span class="nav-label">Dashboard</span>
+        </button>
+        <button id="nav-ai-agent" class="nav-item" onclick="switchTab('ai-agent')">
+          <span class="nav-icon">🤖</span>
+          <span class="nav-label">Agentic AI</span>
+        </button>
+        <button id="nav-discord" class="nav-item" onclick="switchTab('discord')">
+          <span class="nav-icon">💬</span>
+          <span class="nav-label">Discord FAQ</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="connection-status">
+          <div class="status-indicator">
+            <span class="indicator-dot main online"></span>
+            <span class="indicator-label">Main PC</span>
+          </div>
+          <div class="status-indicator">
+            <span id="secondary-dot" class="indicator-dot secondary offline"></span>
+            <span id="secondary-label-indicator" class="indicator-label">Secondary PC</span>
+          </div>
+        </div>
+        <button id="btn-settings-open" class="btn-settings-toggle" onclick="toggleSettings(true)">
+          <span class="settings-icon">⚙️</span> Settings
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main id="app-main">
+      
+      <!-- Top Header -->
+      <header id="main-header">
+        <div class="header-info">
+          <h1 id="page-title">System Dashboard</h1>
+          <p id="page-subtitle" class="text-secondary">Real-time resource monitoring and machine administration</p>
+        </div>
+        <div class="header-actions">
+          <div class="time-widget" id="time-display">00:00:00</div>
+        </div>
+      </header>
+
+      <!-- Tab Content: Dashboard -->
+      <section id="tab-dashboard" class="tab-content active">
+        <div class="pcs-grid">
+          
+          <!-- MAIN PC CARD -->
+          <article class="pc-card" id="card-main-pc">
+            <div class="pc-card-header">
+              <div class="pc-title-area">
+                <span class="pc-icon">🖥️</span>
+                <div>
+                  <h2 class="pc-name">Gaming PC</h2>
+                  <span class="pc-role-badge main">Main</span>
+                </div>
+              </div>
+              <span class="status-badge online">Online</span>
+            </div>
+            
+            <div class="pc-specs-list">
+              <div class="spec-row">
+                <span class="spec-label">Hostname</span>
+                <span id="main-hostname" class="spec-value">...</span>
+              </div>
+              <div class="spec-row">
+                <span class="spec-label">IP Address</span>
+                <span id="main-ip" class="spec-value">...</span>
+              </div>
+              <div class="spec-row">
+                <span class="spec-label">OS Version</span>
+                <span id="main-os" class="spec-value">...</span>
+              </div>
+              <div class="spec-row">
+                <span class="spec-label">CPU Model</span>
+                <span id="main-cpu" class="spec-value">...</span>
+              </div>
+              <div class="spec-row">
+                <span class="spec-label">GPU Model</span>
+                <span id="main-gpu" class="spec-value">...</span>
+              </div>
+            </div>
+
+            <hr class="card-divider">
+
+            <!-- RAM Stat -->
+            <div class="stat-gauge-container">
+              <div class="stat-gauge-header">
+                <span class="stat-title">Memory (RAM)</span>
+                <span id="main-ram-text" class="stat-detail">0 / 0 GB</span>
+              </div>
+              <div class="gauge-bar-wrapper">
+                <div id="main-ram-fill" class="gauge-bar-fill ram" style="width: 0%"></div>
+              </div>
+              <div class="stat-gauge-footer">
+                <span>Usage Load</span>
+                <span id="main-ram-percent">0%</span>
+              </div>
+            </div>
+
+            <!-- Disk Stats -->
+            <div class="stat-gauge-container">
+              <div class="stat-gauge-header">
+                <span class="stat-title">Disk Storage</span>
+                <span id="main-disk-text" class="stat-detail">0 / 0 GB</span>
+              </div>
+              <div class="gauge-bar-wrapper">
+                <div id="main-disk-fill" class="gauge-bar-fill disk" style="width: 0%"></div>
+              </div>
+              <div class="stat-gauge-footer">
+                <span>Space Used</span>
+                <span id="main-disk-percent">0%</span>
+              </div>
+            </div>
+
+            <div class="pc-actions">
+              <button class="btn btn-danger btn-block" onclick="triggerPower('main', 'shutdown')">
+                🔴 Shutdown PC
+              </button>
+            </div>
+          </article>
+
+          <!-- SECONDARY PC CARD -->
+          <article class="pc-card" id="card-secondary-pc">
+            <div class="pc-card-header">
+              <div class="pc-title-area">
+                <span class="pc-icon">💻</span>
+                <div>
+                  <h2 class="pc-name">Secondary PC</h2>
+                  <span class="pc-role-badge secondary">Secondary</span>
+                </div>
+              </div>
+              <span id="secondary-status-badge" class="status-badge offline">Offline</span>
+            </div>
+
+            <!-- Connected View (Hidden by default) -->
+            <div id="secondary-connected-view" style="display: none;">
+              <div class="pc-specs-list">
+                <div class="spec-row">
+                  <span class="spec-label">Hostname</span>
+                  <span id="secondary-hostname" class="spec-value">...</span>
+                </div>
+                <div class="spec-row">
+                  <span class="spec-label">IP Address</span>
+                  <span id="secondary-ip" class="spec-value">...</span>
+                </div>
+                <div class="spec-row">
+                  <span class="spec-label">OS Version</span>
+                  <span id="secondary-os" class="spec-value">...</span>
+                </div>
+                <div class="spec-row">
+                  <span class="spec-label">CPU Model</span>
+                  <span id="secondary-cpu" class="spec-value">...</span>
+                </div>
+                <div class="spec-row">
+                  <span class="spec-label">GPU Model</span>
+                  <span id="secondary-gpu" class="spec-value">...</span>
+                </div>
+              </div>
+
+              <hr class="card-divider">
+
+              <!-- RAM Stat -->
+              <div class="stat-gauge-container">
+                <div class="stat-gauge-header">
+                  <span class="stat-title">Memory (RAM)</span>
+                  <span id="secondary-ram-text" class="stat-detail">0 / 0 GB</span>
+                </div>
+                <div class="gauge-bar-wrapper">
+                  <div id="secondary-ram-fill" class="gauge-bar-fill ram" style="width: 0%"></div>
+                </div>
+                <div class="stat-gauge-footer">
+                  <span>Usage Load</span>
+                  <span id="secondary-ram-percent">0%</span>
+                </div>
+              </div>
+
+              <!-- Disk Stats -->
+              <div class="stat-gauge-container">
+                <div class="stat-gauge-header">
+                  <span class="stat-title">Disk Storage</span>
+                  <span id="secondary-disk-text" class="stat-detail">0 / 0 GB</span>
+                </div>
+                <div class="gauge-bar-wrapper">
+                  <div id="secondary-disk-fill" class="gauge-bar-fill disk" style="width: 0%"></div>
+                </div>
+                <div class="stat-gauge-footer">
+                  <span>Space Used</span>
+                  <span id="secondary-disk-percent">0%</span>
+                </div>
+              </div>
+
+              <div class="pc-actions">
+                <button class="btn btn-danger btn-block" onclick="triggerPower('secondary', 'shutdown')">
+                  🔴 Shutdown PC
+                </button>
+              </div>
+            </div>
+
+            <!-- Offline Setup View (Shown by default) -->
+            <div id="secondary-offline-view" class="setup-container">
+              <div class="setup-illustration">⚠️ Connection Pending</div>
+              <h3 class="setup-heading">Setup Bridge on Secondary PC</h3>
+              <p class="setup-text text-secondary">
+                To connect your second machine, copy the command below and paste it in PowerShell (as Administrator) on the secondary PC:
+              </p>
+              
+              <div class="code-box-wrapper">
+                <code class="code-line" id="powershell-setup-cmd">...</code>
+                <button class="btn btn-copy" onclick="copySetupCommand()">Copy</button>
+              </div>
+
+              <p class="setup-note">
+                This command downloads this executable onto your second PC's desktop in a folder named <strong>Project</strong> and registers the firewall rules automatically.
+              </p>
+            </div>
+          </article>
+
+        </div>
+      </section>
+
+      <!-- Tab Content: Agentic AI -->
+      <section id="tab-ai-agent" class="tab-content">
+        <div class="ai-layout">
+          
+          <!-- AI Setup/Status Panel -->
+          <div class="ai-status-panel">
+            <h3 class="panel-heading">AI Engine Status</h3>
+            <div class="ai-status-indicator offline" id="ai-engine-status-badge">
+              <span class="indicator-dot red"></span> Local Server Inactive
+            </div>
+
+            <div class="ai-config-info">
+              <p class="text-secondary small">
+                The agent connects to a local <code>llama-server</code> to execute system operations. To launch the server, make sure you have downloaded a GGUF model (like Dolphin) into your project directory.
+              </p>
+
+              <div class="ai-setup-steps">
+                <div class="step-card">
+                  <div class="step-num">1</div>
+                  <div class="step-body">
+                    <h4 class="step-title">Place Model</h4>
+                    <p class="step-desc">Put your GGUF model in <code>Project/models/model.gguf</code></p>
+                  </div>
+                </div>
+                
+                <div class="step-card">
+                  <div class="step-num">2</div>
+                  <div class="step-body">
+                    <h4 class="step-title">Start Server</h4>
+                    <button class="btn btn-primary btn-sm btn-block" id="btn-start-ai" onclick="startLocalAiServer()">
+                      🚀 Auto-Initialize Local Server
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <hr class="card-divider">
+
+            <h4 class="small-title">Agent Capabilities (Tools)</h4>
+            <ul class="capability-list">
+              <li>⚙️ <strong>Run Terminal Command</strong>: Runs PowerShell scripts on both PCs</li>
+              <li>📁 <strong>Inspect / Edit Files</strong>: Reads or writes configurations</li>
+              <li>🖥️ <strong>System Diagnostic</strong>: Inspects CPU, RAM, and processes</li>
+              <li>🔍 <strong>Search FAQ</strong>: Queries the Discord archive for solutions</li>
+            </ul>
+          </div>
+
+          <!-- Chat Console -->
+          <div class="ai-chat-console">
+            <!-- Messages Log -->
+            <div class="chat-messages-container" id="ai-chat-messages">
+              <div class="chat-bubble assistant">
+                <div class="bubble-header">
+                  <span class="avatar-icon">🤖</span>
+                  <span class="sender-name">System Agent</span>
+                  <span class="timestamp">System</span>
+                </div>
+                <div class="bubble-content">
+                  Hello! I am your agentic AI helper. I can execute commands and inspect both of your PCs to help configure everything correctly and troubleshoot issues. What would you like to run?
+                </div>
+              </div>
+            </div>
+
+            <!-- Agent Run Progress Bar / Loader (Hidden by default) -->
+            <div id="agent-thinking-indicator" class="thinking-loader" style="display: none;">
+              <div class="spinner-small"></div>
+              <span id="agent-thinking-text">Agent is thinking...</span>
+            </div>
+
+            <!-- Console Input -->
+            <div class="chat-input-area">
+              <input type="text" id="chat-input" placeholder="e.g. 'Check running processes on second PC' or 'Fix Sunshine lag'" onkeydown="if(event.key === 'Enter') sendChatMessage()">
+              <button class="btn btn-primary" onclick="sendChatMessage()">Send</button>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Tab Content: Discord Archive Search -->
+      <section id="tab-discord" class="tab-content">
+        <div class="discord-layout">
+          
+          <!-- Discord Server Sidebar -->
+          <aside class="discord-sidebar">
+            <div class="discord-server-header">
+              <span class="server-avatar">🌐</span>
+              <span class="server-title">Bridge Support</span>
+            </div>
+            
+            <div class="discord-channels">
+              <span class="channel-section">Text Channels</span>
+              <button class="discord-channel active" onclick="selectDiscordChannel('welcome-rules')">
+                <span class="channel-hashtag">#</span> welcome-rules
+              </button>
+              <button class="discord-channel" onclick="selectDiscordChannel('sunshine-setup')">
+                <span class="channel-hashtag">#</span> sunshine-setup
+              </button>
+              <button class="discord-channel" onclick="selectDiscordChannel('audio-routing')">
+                <span class="channel-hashtag">#</span> audio-routing
+              </button>
+              <button class="discord-channel" onclick="selectDiscordChannel('ai-troubleshooting')">
+                <span class="channel-hashtag">#</span> ai-troubleshooting
+              </button>
+              <button class="discord-channel" onclick="selectDiscordChannel('bridge-debug')">
+                <span class="channel-hashtag">#</span> bridge-debug
+              </button>
+            </div>
+          </aside>
+
+          <!-- Discord Feed Area -->
+          <div class="discord-feed">
+            <header class="discord-feed-header">
+              <div class="channel-name-area">
+                <span class="channel-hashtag">#</span>
+                <span id="discord-current-channel">welcome-rules</span>
+              </div>
+              <div class="discord-search-bar">
+                <input type="text" id="discord-search-input" placeholder="Search archive..." oninput="searchDiscordArchive()">
+                <span class="search-clear-icon" onclick="clearDiscordSearch()">✕</span>
+              </div>
+            </header>
+            
+            <!-- Message List -->
+            <div class="discord-messages" id="discord-messages-list">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Settings Modal/Drawer -->
+  <div id="settings-drawer" class="modal-overlay" style="display: none;">
+    <div class="modal-box settings-box">
+      <div class="modal-header">
+        <h3 class="modal-title">System Configuration</h3>
+        <button class="btn-close-modal" onclick="toggleSettings(false)">✕</button>
+      </div>
+
+      <div class="modal-body">
+        
+        <div class="settings-group">
+          <h4 class="settings-sec-title">Local Bridge Security</h4>
+          <div class="input-row">
+            <label for="settings-token">Bridge Token</label>
+            <input type="text" id="settings-token" placeholder="AY2009DAN#">
+          </div>
+          <span class="helper-text">Must match exactly on both computers.</span>
+        </div>
+
+        <div class="settings-group">
+          <h4 class="settings-sec-title">Network Mapping</h4>
+          <div class="input-row">
+            <label for="settings-main-ip">Main PC IP (This PC)</label>
+            <input type="text" id="settings-main-ip" placeholder="192.168.1.X">
+          </div>
+          <div class="input-row">
+            <label for="settings-secondary-ip">Secondary PC IP</label>
+            <input type="text" id="settings-secondary-ip" placeholder="192.168.1.Y">
+          </div>
+        </div>
+
+        <div class="settings-group">
+          <h4 class="settings-sec-title">Local AI Hardware Options</h4>
+          <div class="checkbox-row">
+            <input type="checkbox" id="settings-ai-gpu" checked>
+            <label for="settings-ai-gpu">Enable GPU Acceleration (Vulkan/CUDA)</label>
+          </div>
+          <div class="input-row">
+            <label for="settings-ai-layers">GPU Layers Offload (0-99)</label>
+            <input type="number" id="settings-ai-layers" value="33" min="0" max="99">
+          </div>
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="toggleSettings(false)">Cancel</button>
+        <button class="btn btn-primary" onclick="saveSettings()">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast-hidden">
+    <span id="toast-message">Notification</span>
+  </div>
+
+</body>
+</html>
