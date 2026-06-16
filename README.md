@@ -62,5 +62,8 @@
 
 ---
 <p align="center">
-  <i>Developed by OkzTy and 416pruce | Synced © 2026</i>
+  <i>Developed by
+@416onspruce-gif
+@Enescorp
+@OkzTy| Synced © 2026</i>
 </p>
