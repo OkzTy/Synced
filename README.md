@@ -5,9 +5,9 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Status-Discontinued-red?style=for-the-badge" alt="Status">
-  <img src="https://img.shields.io/badge/Version-2.3.2-blue?style=for-the-badge" alt="Version">
-  <img src="https://img.shields.io/badge/OS-Windows-lightgrey?style=for-the-badge" alt="OS">
+<img src="https://img.shields.io/badge/Status-Discontinued-red?style=for-the-badge" alt="Status">
+<img src="https://img.shields.io/badge/Version-2.3.2-blue?style=for-the-badge" alt="Version">
+<img src="https://img.shields.io/badge/OS-Windows-lightgrey?style=for-the-badge" alt="OS">
 </p>
 
 <p align="center">
